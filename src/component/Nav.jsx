@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { AuthContext } from '../App'
 
 const Nav = () => {
+
+
+  let {searchTerm,setSearchTerm}=useContext(AuthContext)
   return (
     <div>
          
@@ -17,7 +21,8 @@ const Nav = () => {
 
       <div className="flex items-center space-x-4">
         <div className="relative hidden md:block w-64">
-          <input type="text" placeholder="Search for products..."
+          <input value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)} type="text" placeholder="Search for products..."
             className="w-full bg-gray-100 rounded-full py-2 px-4 text-sm"></input>
           <span className="absolute right-3 top-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"

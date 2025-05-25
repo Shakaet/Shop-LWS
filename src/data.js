@@ -1,6 +1,7 @@
 const data = [
     {
         "id": crypto.randomUUID(),
+        "index":0,
         "cover": "image 1.png",
         "title": "Gradient Graphic T-shirt",
          "left":8,
@@ -8,10 +9,12 @@ const data = [
         "price": 750,
          "btn":"add",
          "size": "Large",
-         "color": "Red"
+         "color": "Red",
+         "fee":15
     },
     {
         "id": crypto.randomUUID(),
+        "index":1,
         "cover": "image 7-1.png",
         "title": "Polo with Tipping Details",
          "left":9,
@@ -19,10 +22,12 @@ const data = [
         "price": 700,
         "btn":"add",
         "size": "Medium",
-         "color": "Blue"
+         "color": "Blue",
+         "fee":15
     },
     {
         "id": crypto.randomUUID(),
+        "index":2,
         "cover": "image 7.png",
         "title": "Black Striped T-shirt",
          "left":10,
@@ -30,10 +35,12 @@ const data = [
         "price": 400,
         "btn":"add",
         "size": "Long",
-         "color": "Gray"
+         "color": "Gray",
+         "fee":15
     },
     {
         "id": crypto.randomUUID(),
+        "index":3,
         "cover": "image 8-1.png",
         "title": "Skinny Fit Jeans",
          "left":13,
@@ -41,10 +48,12 @@ const data = [
         "price": 750,
         "btn":"add",
         "size": "Large",
-         "color": "Black"
+         "color": "Black",
+         "fee":15
     },
     {
         "id": crypto.randomUUID(),
+        "index":4,
         "cover": "image 8-2.png",
         "title": "Checkered Shirt",
          "left":4,
@@ -52,10 +61,12 @@ const data = [
         "price": 500,
         "btn":"add",
         "size": "Medium",
-         "color": "Green"
+         "color": "Green",
+         "fee":15
     },
     {
         "id": crypto.randomUUID(),
+        "index":4,
         "cover": "image 8.png",
         "title": "Sleeve Striped T-shirt",
         "left":5,
@@ -63,7 +74,8 @@ const data = [
         "price": 800,
         "btn":"add",
         "size": "Medium",
-         "color": "White"
+         "color": "White",
+         "fee":15
     }
 ]
 

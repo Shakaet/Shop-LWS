@@ -1,185 +1,220 @@
-import { createContext, useState } from "react"
-import Root from "./assets/Root"
-import AnounceBar from "./component/AnounceBar"
-import Footer from "./component/Footer"
-import Mycart from "./component/Mycart"
-import Nav from "./component/Nav"
-import OrderSummary from "./component/orderSummary"
-import ProductList from "./component/ProductList"
-import ProductSort from "./component/ProductSort"
-import { getAllMovies } from "./data"
+import { createContext, useState } from "react";
+import Root from "./assets/Root";
+import { getAllMovies } from "./data";
 
-
-
-
-export let AuthContext= createContext(null)
-
+export let AuthContext = createContext(null);
 
 function App() {
+  let data = getAllMovies();
 
-   let data=getAllMovies()
+  let [productData, setproductData] = useState(
+    data.map((product) => ({
+      ...product,
+      count: 1,
+      total: 0,
+    }))
+  );
+  const [mycart, setmycart] = useState([]);
+  const [totalAmount, settotalAmount] = useState(0);
+  const [discount, setdiscount] = useState(0);
+  const [finalPrice, setfinalPrice] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
 
-
-   let [productData,setproductData]=useState(data)
-  let [mycart,setmycart]=useState([])
-
-  let [count,setCount]=useState(1)
-
-  let [total,setTotal]=useState(0)
-  
+  let search = () => {
+    const filteredData = productData.filter((item) =>
+      item.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    return filteredData;
+  };
 
   let handleCart = (data, id) => {
-  if (data.btn === "rem") return;
+    if (data.btn === "rem") return;
 
-  
+    const updatedProducts = productData.map((product) => {
+      if (product.id === id) {
+        const updated = {
+          ...product,
+          btn: "rem",
+          left: product.left - 1,
+          count: 1,
+          total: product.price,
+          fee: 15,
+        };
+        console.log("Updated product:", updated);
+        const newTotalAmount = updated.total;
+        const newDiscount = updated.total * 0.2;
+        const newFinalPrice = newTotalAmount - newDiscount + updated.fee;
+        setmycart([...mycart, updated]);
+        settotalAmount(newTotalAmount);
+        setdiscount(newDiscount);
+        setfinalPrice(newFinalPrice);
 
-  const updatedProducts = productData.map((product) => {
-    if (product.id === id) {
-      const updated = { ...product, btn: "rem", left: product.left - 1 };
-      console.log("Updated product:", updated);
-      setmycart([...mycart, updated]);
-      setTotal(updated.price) // ✅ Log the updated object here
-      return updated;
-    }
-    return product;
-  });
-
-  console.log(updatedProducts)
-  
-  
-  setproductData(updatedProducts);
-};
-
-
-
-
-
-
-  let handleRemoveCart=(data,id)=>{
-
-     if(data.btn==="add"){
-      return
-    }
-
-    
-    let filteredData=mycart.filter((product)=>product.id !==id)
-
-    setmycart(filteredData)
-
-
-
-    let updatedData=productData.map((product)=>{
-      if(product.id=== id){
-
-        let updated={...product,btn:"add",left:product.left+1}
-        return updated
+        return updated;
       }
-      return product
-
-    })
-    setproductData(updatedData)
-
-   
-
-
-
-
-
-  }
-
-
-
-
-  let handleAdd=(item)=>{
-    
-
-    if(item.left>count){
-          // setTotal(item.price+total)
-     setCount((prevCount) => {
-
-      let newCount=prevCount+1
-    
-    
-    // Update total using the new count
-    setTotal(item.price * newCount);
-    
-    return newCount
-  });
-
-
-    }
-
-    
-    
-
-    let updatedData=productData.map((product)=>{
-
-      if(product.id===item.id && product.left>0){
-        return {...product,left:product.left-1}
-         
-      }
-      return product
-      
-    })
-    setproductData(updatedData)
-
-  
-
-    
-    
-    
-  }
-   let handleminus = (item) => {
-  if (count > 1) {
-    // Decrement count and update total together
-    setCount((prevCount) => {
-      const newCount = prevCount - 1;
-      setTotal(item.price * newCount);
-      return newCount;
+      return product;
     });
 
-    // Update product data (add 1 back to stock)
+    console.log(updatedProducts);
+
+    setproductData(updatedProducts);
+  };
+
+  let handleRemoveCart = (data, id) => {
+    if (data.btn === "add") return;
+
+    const filteredData = mycart.filter((product) => product.id !== id);
+
+    setmycart(filteredData);
+
     const updatedData = productData.map((product) => {
-      if (product.id === item.id) {
-        return { ...product, left: product.left + 1 };
+      if (product.id === id) {
+        return { ...product, btn: "add", left: product.left + 1 };
+      }
+      return product;
+    });
+    setproductData(updatedData);
+
+    const newTotalAmount = filteredData.reduce(
+      (sum, item) => sum + item.total,
+      0
+    );
+    const newDiscount = filteredData.reduce(
+      (sum, item) => sum + item.total * 0.2,
+      0
+    );
+    const newFee = filteredData.reduce((sum, item) => sum + (item.fee || 0), 0);
+    const newFinalPrice = newTotalAmount - newDiscount + newFee;
+
+    settotalAmount(newTotalAmount);
+    setdiscount(newDiscount);
+    setfinalPrice(newFinalPrice);
+  };
+
+  let handleAdd = (item) => {
+    const updatedData = productData.map((product) => {
+      if (product.id === item.id && product.left > 0) {
+        const newCount = product.count + 1;
+        return {
+          ...product,
+          count: newCount,
+          left: product.left - 1,
+          total: newCount * product.price,
+        };
       }
       return product;
     });
 
     setproductData(updatedData);
-  }
-};
 
- 
+    const updatedCart = mycart.map((product) => {
+      if (product.id === item.id && product.left > product.count) {
+        return {
+          ...product,
+          count: product.count + 1,
+          total: (product.count + 1) * product.price,
+        };
+      }
+      return product;
+    });
 
-  console.log(mycart)
+    setmycart(updatedCart);
 
-  let val={
+    const newTotalAmount = updatedCart.reduce(
+      (sum, product) => sum + product.price * product.count,
+      0
+    );
+    const newDiscount = updatedCart.reduce(
+      (sum, product) => sum + product.price * product.count * 0.2,
+      0
+    );
+    const totalFees = updatedCart.reduce(
+      (sum, product) => sum + (product.fee || 0),
+      0
+    );
+    const newFinalPrice = newTotalAmount - newDiscount + totalFees;
+
+    settotalAmount(newTotalAmount);
+    setdiscount(newDiscount);
+    setfinalPrice(newFinalPrice);
+  };
+
+  let handleminus = (item) => {
+    const updatedData = productData.map((product) => {
+      if (product.id === item.id && product.count > 1) {
+        const newCount = product.count - 1;
+        return {
+          ...product,
+          count: newCount,
+          left: product.left + 1,
+          total: newCount * product.price,
+        };
+      }
+      return product;
+    });
+
+    setproductData(updatedData);
+
+    // Update mycart: reduce count and update total
+    const updatedCart = mycart.map((product) => {
+      if (product.id === item.id && product.count > 1) {
+        const newCount = product.count - 1;
+        return {
+          ...product,
+          count: newCount,
+          total: newCount * product.price,
+        };
+      }
+      return product;
+    });
+
+    setmycart(updatedCart);
+
+    const newTotalAmount = updatedCart.reduce(
+      (sum, product) => sum + product.price * product.count,
+      0
+    );
+    settotalAmount(newTotalAmount);
+
+    const newDiscount = updatedCart.reduce(
+      (sum, product) => sum + product.price * product.count * 0.2,
+      0
+    );
+    setdiscount(newDiscount);
+
+    const totalFees = updatedCart.reduce(
+      (sum, product) => sum + (product.fee || 0),
+      0
+    );
+
+    const newFinalPrice = newTotalAmount - newDiscount + totalFees;
+    setfinalPrice(newFinalPrice);
+  };
+
+  console.log(mycart);
+
+  let val = {
     handleCart,
     productData,
     handleRemoveCart,
     mycart,
     handleAdd,
     handleminus,
-    count,
-    total
-  }
-
-
-
-
-  
-
+    totalAmount,
+    settotalAmount,
+    discount,
+    setdiscount,
+    finalPrice,
+    setfinalPrice,
+    search,
+    searchTerm,
+    setSearchTerm,
+  };
 
   return (
-
     <AuthContext.Provider value={val}>
-
-       <Root></Root>
-
+      <Root></Root>
     </AuthContext.Provider>
-   
-  )
+  );
 }
 
-export default App
+export default App;

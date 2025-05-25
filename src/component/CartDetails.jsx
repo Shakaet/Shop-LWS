@@ -2,10 +2,17 @@ import React, { useContext } from 'react'
 import { getImageURL } from '../utils/ImageLink'
 import { AuthContext } from '../App'
 
+
+
+
+
 const CartDetails = ({item}) => {
 
 
-   let {handleAdd,handleminus,count}= useContext(AuthContext)
+   let {handleAdd,handleminus,productData}= useContext(AuthContext)
+
+
+   
 
     
   return (
@@ -27,7 +34,12 @@ const CartDetails = ({item}) => {
                 <p className="font-bold">${item.price}</p>
                 <div className="flex items-center space-x-2">
                   <button onClick={()=>handleminus(item)} className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">−</button>
-                  <span className="text-sm">{count}</span>
+
+                  <span key={item.id} className="text-sm">
+                  {item.count}
+                </span>
+
+                 
                   <button onClick={()=>handleAdd(item)}  className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">+</button>
                 </div>
               </div>

@@ -7,7 +7,10 @@ import { AuthContext } from '../App'
 const ProductList = () => {
 
 
-    let {productData}=useContext(AuthContext)
+    let {search}=useContext(AuthContext)
+
+
+    let productData= search()
 
 
   

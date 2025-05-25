@@ -3,7 +3,18 @@ import { AuthContext } from '../App'
 
 const OrderSummary = () => {
 
-  let {total}=useContext(AuthContext)
+  let{totalAmount,settotalAmount,mycart,productData,discount,finalPrice}=useContext(AuthContext)
+
+  const total = mycart.reduce((sum, item) => sum + item.total, 0);
+  settotalAmount(total);
+
+  console.log(total)
+
+
+
+
+
+
   return (
     <div>
 
@@ -13,11 +24,11 @@ const OrderSummary = () => {
             <div className="space-y-2 mb-4">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">${total}</span>
+                <span className="font-medium">{totalAmount}</span>
               </div>
               <div className="flex justify-between text-red-500">
                 <span>Discount (-20%)</span>
-                <span>-$113</span>
+                <span>-${discount}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Delivery Fee</span>
@@ -25,7 +36,7 @@ const OrderSummary = () => {
               </div>
               <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-200">
                 <span>Total</span>
-                <span>$467</span>
+                <span>${finalPrice}</span>
               </div>
             </div>
 
